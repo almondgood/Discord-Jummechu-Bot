@@ -4,6 +4,14 @@ import logging
 import random
 import asyncio
 
+
+#================Initialization================#
+logging.basicConfig(
+    filename = 'app.log',
+    filemode='w',
+    level=logging.DEBUG
+)
+
 jumme = []
 dosirak = []
 jumme_commands = ["!점메추", "!점메추가", "!도시락"]
@@ -13,7 +21,10 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 discord.utils.setup_logging(level=logging.INFO, root=False)
 
 print(discord.version_info)
+#================Initialization================#
 
+
+#================File Open================#
 with open('token.txt','r') as f:
     token=f.read() #토큰 읽어오기
 
@@ -28,7 +39,9 @@ with open("dosirak.txt", "r", encoding="UTF-8") as f:
         line = f.readline() 
         if line == '': break         
         dosirak.append(line.strip())
+#================File Open================#
 
+#================Command================#
 @bot.event
 async def on_ready():             
     print(f'{bot.user} 에 로그인하였습니다!')
@@ -42,7 +55,6 @@ async def jummechu(ctx):
     await ctx.send(random.choice(dosirak))
     
     
-
 
 
 # TODO : 파일 입출력으로 변경
@@ -61,7 +73,7 @@ async def jummechuga(ctx):
                 await ctx.send("점심 메뉴 추가 리스트가 비어있습니다.")
                 continue
             
-            food_list.remove('저장')
+            msg.remove('저장')
             break
             
         if '나가기' in msg or msg in jumme_commands:
@@ -76,7 +88,7 @@ async def jummechuga(ctx):
     jumme.append(food_list)
     logging.info(food_list)
     await ctx.send(f"저장되었습니다.")
-        
+#================Command================#        
     
 
 bot.run(token) #생성한 Bot 객체에 토큰을 넣어 실행
