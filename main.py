@@ -65,7 +65,54 @@ async def jummechu(ctx):
 async def dosirak(ctx): 
     await ctx.send(random.choice(dosirak))
     
-
+# 점메추 리스트
+@bot.command(name="점메")
+async def print_jumme(ctx):
+    await asyncio.sleep(0.2)
+    sended_list = await ctx.send("점심메뉴 리스트를 출력합니다.")
+    
+    def check(message):
+        return message.author == ctx.author and message.channel == ctx.channel
+    
+    cnt = 0
+    while True:
+        await asyncio.sleep(0.3)
+        bot_msg = ["", "", ""] 
+        user_msg = ""
+        jumme_list = ""
+        
+        # JUMME_PAGE 단위로 페이징
+        for i, item in enumerate(random.sample(jumme, JUMME_PAGE)):
+            jumme_list += f"{(cnt * i) + 1}. {item}\n"
+            
+        await sended_list.edit(content=jumme_list)
+        logging.debug(jumme_list)
+        
+        if cnt == 0:    
+            bot_msg[0] = await ctx.send('다음 리스트를 출력하려면 `다음`을 입력해 주세요.\n' + '그렇지 않다면 `나가기`를 입력해 주세요.')
+            
+            
+        # 입력 메시지 검증
+        while True: 
+            await asyncio.sleep(0.1)
+            user_msg_object = await bot.wait_for('message', check=check) 
+            user_msg = user_msg_object.content.strip().split()  
+            
+            await user_msg_object.delete()
+            logging.info(user_msg)
+            
+            if '다음' in user_msg:
+                if bot_msg[1] != "":
+                    await bot_msg[1].delete()
+                    bot_msg[1] = ""
+                cnt += 1
+                break
+            elif '나가기' in user_msg or user_msg[0] in jumme_commands:
+                await ctx.send('점심 메뉴 출력을 종료합니다.')
+                return
+            else:
+                if bot_msg[1] == "":
+                    bot_msg[1] = await ctx.send("입력이 잘못되었습니다.\n" + "다시 입력해주세요.")
                 
                 
 
